@@ -1,8 +1,8 @@
-name = "houdini"
+name = "houdinis_publicist"
 version = "1.2.0"
-description = "🪄 Fast HTML escaping"
+description = "HTML attribute escaping, that can omit quotes if safe to do so"
 licences = ["Apache-2.0"]
-repository = { type = "github", user = "giacomocavalieri", repo = "houdini" }
+repository = { type = "github", user = "bentomas", repo = "houdinis_publicist" }
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

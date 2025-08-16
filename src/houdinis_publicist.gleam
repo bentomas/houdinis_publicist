@@ -12,7 +12,6 @@
 /// assert escape("wibble & wobble") == "wibble &amp; wobble"
 /// assert escape("wibble > wobble") == "wibble &gt; wobble"
 /// ```
-///
 @external(javascript, "./houdini.ffi.mjs", "escape")
 pub fn escape(string: String) -> String {
   // This version is highly optimised for the Erlang target, it treats Strings
@@ -24,6 +23,44 @@ pub fn escape(string: String) -> String {
   // we know that the BitArray we build is definitely a valid string, so we can
   // skip verifying that again as well as dealing with the `Result`.
   unsafe_bit_array_to_string(result)
+}
+
+pub fn escape_attribute(string: String) -> String {
+  let bits = <<string:utf8>>
+  let result = do_escape_attribute(bits, bits, 0)
+
+  // we know that the BitArray we build is definitely a valid string, so we can
+  // skip verifying that again as well as dealing with the `Result`.
+  unsafe_bit_array_to_string(result)
+}
+
+fn do_escape_attribute(bin: BitArray, original: BitArray, length: Int) {
+  // case expression that checks if the first bit of the string is in a
+  // alphanumeric character range of ascii
+  case bin {
+    <<c, rest:bits>> if c >= 48 && c <= 57 ->
+      do_escape_attribute(rest, original, length + 1)
+    <<c, rest:bits>> if c >= 65 && c <= 90 ->
+      do_escape_attribute(rest, original, length + 1)
+    <<c, rest:bits>> if c >= 97 && c <= 122 ->
+      do_escape_attribute(rest, original, length + 1)
+    <<"-", rest:bits>>
+    | <<"_", rest:bits>>
+    | <<".", rest:bits>>
+    | <<":", rest:bits>> -> do_escape_attribute(rest, original, length + 1)
+
+    // didn't ever find something that wasn't whitelisted, can go ahead and
+    // use original string
+    <<>> -> original
+    // otherwise do regular houdini escaping
+    <<_, _:bits>> -> {
+      let h = do_escape_normal(bin, 0, original, <<>>, length)
+      <<"\"", h:bits, "\"">>
+    }
+
+    _ ->
+      panic as "do_escape_check: non byte aligned string, all strings should be byte aligned"
+  }
 }
 
 // A possible way to escape chars would be to split the string into graphemes,

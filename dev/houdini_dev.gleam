@@ -3,7 +3,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import gleamy/bench
-import houdini
+import houdinis_publicist
 import simplifile
 
 pub fn main() {
@@ -17,7 +17,7 @@ pub fn main() {
       bench.Input("just_html  (" <> size <> ")", html),
       bench.Input("no_escapes (" <> size <> ")", no_escapes),
     ],
-    [bench.Function("houdini.escape", houdini.escape)],
+    [bench.Function("houdinis_publicist.escape", houdinis_publicist.escape)],
     [bench.Duration(5000), bench.Warmup(2000)],
   )
   |> bench.table([bench.IPS, bench.Min, bench.P(99)])
