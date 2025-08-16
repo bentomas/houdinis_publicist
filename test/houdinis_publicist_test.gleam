@@ -10,6 +10,10 @@ pub fn simple_conversions_test() {
   let tests = [
     #("a", "a"),
     #("abcd", "abcd"),
+    #(
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/",
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/",
+    ),
     #("ab cd", "\"ab cd\""),
     #("a\"", "\"a&quot;\""),
   ]

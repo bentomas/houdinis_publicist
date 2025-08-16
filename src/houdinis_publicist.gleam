@@ -38,15 +38,20 @@ fn do_escape_attribute(bin: BitArray, original: BitArray, length: Int) {
   // case expression that checks if the first bit of the string is in a
   // alphanumeric character range of ascii
   case bin {
+    // digits
     <<c, rest:bits>> if c >= 48 && c <= 57 ->
       do_escape_attribute(rest, original, length + 1)
+    // A-Z
     <<c, rest:bits>> if c >= 65 && c <= 90 ->
       do_escape_attribute(rest, original, length + 1)
+    // a-z
     <<c, rest:bits>> if c >= 97 && c <= 122 ->
       do_escape_attribute(rest, original, length + 1)
+    // couple chars
     <<"-", rest:bits>>
     | <<"_", rest:bits>>
     | <<".", rest:bits>>
+    | <<"/", rest:bits>>
     | <<":", rest:bits>> -> do_escape_attribute(rest, original, length + 1)
 
     // didn't ever find something that wasn't whitelisted, can go ahead and
